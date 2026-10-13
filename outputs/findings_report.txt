@@ -1,1 +1,87 @@
+======================================================================
+PART A  RAW DATA PROFILE
+======================================================================
+Source file:            CCDB_Export_5_September_2023_through_March_2024.csv
+Total complaints:       945,532
+Date range:             2023-09-01 to 2024-03-31
+Duplicate IDs:          0
+With narrative text:    318,804 (33.7%)
+Credit reporting:       781,459 (82.6%)
+Top 3 companies share:  78.5%  (TRANSUNION INTERMEDIATE HOLDINGS, INC., EQUIFAX, INC., Experian Information Solutions Inc.)
+Company response (all rows):
+   Closed with non-monetary relief: 470,167 (49.7%)
+   Closed with explanation: 461,465 (48.8%)
+   Closed with monetary relief: 13,351 (1.4%)
+   Untimely response: 538 (0.1%)
+   MISSING: 11 (0.0%)
 
+======================================================================
+PART B  SCOPE AFTER CLEANING
+======================================================================
+Rule 1: exclude credit reporting (dominant product, 3 bureaus).
+Rule 2: keep only closed complaints (outcome must be known).
+Rows kept:              163,699
+Monetary relief:        12,912 (7.89%)
+With narrative:         92,029 (56.2%)
+Relief among narrative: 7,746 (8.42%)
+
+======================================================================
+PART C  FINDINGS BY PRODUCT
+======================================================================
+Product                                                     Rows  Relief%   Text%
+Debt collection                                           50,536     0.39    53.0
+Credit card                                               36,967    14.60    57.9
+Checking or savings account                               27,312    15.73    56.1
+Mortgage                                                  12,578     2.16    56.8
+Student loan                                              10,611     1.05    57.9
+Money transfer, virtual currency, or money service         8,776     8.15    62.2
+Vehicle loan or lease                                      7,279     2.51    56.3
+Payday loan, title loan, personal loan, or advance loan    4,749     4.49    57.5
+Prepaid card                                               4,026    36.61    59.0
+Debt or credit management                                    865     6.36    66.4
+Lowest relief:  Debt collection (0.39%)
+Highest relief: Prepaid card (36.61%)
+Gap:            95 times
+
+======================================================================
+PART D  RQ1 PREDICTOR COLUMNS (one category per feature is the baseline)
+======================================================================
+   Product                         10 categories ->   9 columns
+   Issue (top 15 + Other)          16 categories ->  15 columns
+   Region (Census + Other)          5 categories ->   4 columns
+   Submitted via                    4 categories ->   3 columns
+   Tags (incl. none)                4 categories ->   3 columns
+   k (total predictor columns) = 34
+
+======================================================================
+PART E  SAMPLE SIZE BY RESEARCH QUESTION
+======================================================================
+RQ1  Events per variable (logistic regression)
+     Parameters:  EPV=10, k=34, p=0.0789
+     Calculation: 10 x 34 / 0.0789
+     Minimum N:   4,311    Available: 163,699    OK
+RQ2  Power of test (chi-square)
+     Parameters:  alpha=0.05, power=0.8, w=0.1, df=3
+     Calculation: statsmodels solve_power
+     Minimum N:   1,091    Available: 77,081    OK
+RQ3  Power of test (recall, proportion)
+     Parameters:  recall 0.7 vs 0.6, prevalence=0.0842, test=0.2
+     Calculation: (2.80 x 0.5 / 0.10)^2 = 197 positives; / 0.0842 / 0.2
+     Minimum N:   11,703    Available: 92,029    OK
+RQ4  Power of test (Pearson, Fisher z)
+     Parameters:  alpha=0.05, power=0.8, r=0.3
+     Calculation: ((z)/(0.5 ln((1+r)/(1-r))))^2 + 3
+     Minimum N:   85    Available: 375    OK
+Largest minimum: RQ3 = 11,703
+
+======================================================================
+PART F  HYPOTHESES
+======================================================================
+RQ1  H0: No complaint feature is associated with monetary relief (all beta = 0).
+     H1: At least one complaint feature is associated with monetary relief.
+RQ2  H0: The monetary relief rate is the same across the four payment products.
+     H1: The monetary relief rate differs across the four payment products.
+RQ3  H0: The text-based model's recall for monetary relief is not higher than the structured-feature baseline (recall <= 0.60).
+     H1: The text-based model's recall for monetary relief is higher than the structured-feature baseline (recall > 0.60).
+RQ4  H0: There is no correlation between company complaint volume and relief rate (rho = 0).
+     H1: There is a correlation between company complaint volume and relief rate (rho != 0).
